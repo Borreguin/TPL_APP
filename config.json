@@ -1,0 +1,1 @@
+{"Value":{"columnas":["FECHA","AS (kWh)","AE (kWh)","RS (kVARh)","RE (kVARh)"],"fecha_formato":["%m\/%d\/%Y@%H:%M:%S.%f","%m\/%d\/%Y@%H:%M:%S","%m\/%d\/%Y@%H:%M","%m-%d-%Y@%H:%M:%S.%f","%m-%d-%Y@%H:%M:%S","%m-%d-%Y@%H:%M"]}}
