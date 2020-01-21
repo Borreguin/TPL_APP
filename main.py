@@ -1,4 +1,4 @@
-import pandas as pd, logging, os, sys
+import pandas as pd, logging, os
 from my_lib import utils as u
 from my_lib import log_util as lu
 from gui import dialog_util as du
@@ -17,10 +17,13 @@ def run_application():
     # success, df = u.read_excel_file(file_name)
     # print(df.columns)
     # print(df)
+
     app = QtWidgets.QApplication([])
     application = du.tpl_window()
     application.show()
     sys.exit(app.exec())
 
 
-run_application()
+if __name__ == '__main__':
+    import sys
+    run_application()

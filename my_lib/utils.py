@@ -4,12 +4,14 @@ import logging
 import os, numpy as np
 import pandas as pd
 from my_lib import log_util as lu
+from zipfile import ZipFile
 
 lg = logging.getLogger("utils")
 lg.addHandler(lu.SQLiteHandler())
 
 script_path = os.path.dirname(os.path.abspath(__file__))
 config_file = script_path.replace("my_lib", "config.json")
+output_path = script_path.replace("my_lib", "output")
 name = ""
 
 
@@ -23,16 +25,14 @@ def read_excel_file(file_name:str):
         # check si las columnas del archivo son correctas:
         success, result = valid_columns_names(list(df.columns))
         if not success:
-            lg.exception(result)
-            return False, result
+            return False, None, "Error(Columnas invalidas)"
         df.columns = result
 
         # check si las fechas son correctas en la columna FECHA
         df.sort_values(by=["FECHA"], inplace=True)
         success, date, timestamp, msg = check_dates_in_a_list(list(df['FECHA']))
         if not success:
-            lg.exception(msg)
-            return False, msg
+            return False, None, "Error(Formato fecha incorrecto)"
 
         df["FECHA"] = date
         df["HORA"] = timestamp
@@ -43,7 +43,7 @@ def read_excel_file(file_name:str):
         if len(df.index) != 96:
             msg = "[{0}] El archivo no contiene 96 periodos. \n " \
                   "Número de periodos: [{1}]".format(name, len(df.index))
-            return False, msg
+            return False, None, "Error(No. periodos {0})".format(len(df.index))
 
         # check si el dataframe contiene solo números:
         df.drop(columns=or_columns, inplace=True)
@@ -54,14 +54,14 @@ def read_excel_file(file_name:str):
             cls = [df.columns[ix] for ix in ix_c]
             msg = "[{0}] El archivo contiene valores no reconocidos como números " \
                   "en las columnas [{1}]".format(name, cls)
-            lg.exception(msg)
-            return False, msg
+            return False, None, "Error(No numéricos)"
         df_final = pd.concat([df_final, df], axis=1)
-        return True, df_final
+        return True, df_final, "Ok ({0})".format(date[0].strftime("%m/%d/%Y"))
 
     except Exception as e:
         print(e)
-        return None
+        return False, None, str(e)
+
 
 def get_columns_by_default():
     check_json = os.path.exists(config_file)
@@ -75,6 +75,7 @@ def get_columns_by_default():
     else:
         save_config("columnas", columns)
     return columns
+
 
 def valid_columns_names(columns_to_check):
     global name
@@ -180,13 +181,29 @@ def save_config(parameter_name, parameter_value):
         return False, "Error: {0}".format(e)
 
 
-def transform_info(df: pd.DataFrame):
+def transform_info(df: pd.DataFrame, p_frontera):
     clmn = get_columns_by_default()
-    'AS (kWh)', 'AE (kWh)', 'RS (kVARh)', 'RE (kVARh)'
-    df_t = pd.DataFrame(columns=["sp_1", "FECHA", "HORA", "sp_2", "ql_0", "sp_3", "p",
-                                 "sp_4", clmn[0], "sp_5", "ql_1",
-                                 "sep_6", clmn[1], "sp_7", "ql_2",
-                                 "sp_8", clmn[2], "sp_9", "ql_3",
-                                 "sp_10", clmn[3], "sp_11", "ql_4", "end"])
 
+    template = "#{fecha} {hora}#0#{periodo}#{AS}#0#{AE}#0#{RS}#0#{RE}#0#########\n"
+    str_final = str()
+    for ix in df.index:
+        str_final += template.format(fecha=df["FECHA"].loc[ix].strftime("%d/%m/%Y"),
+                                     hora=df["HORA"].loc[ix],
+                                     periodo=ix+1,
+                                     AS=df[clmn[1]].loc[ix],
+                                     AE=df[clmn[2]].loc[ix],
+                                     RS=df[clmn[3]].loc[ix],
+                                     RE=df[clmn[4]].loc[ix])
 
+    frontera_file = p_frontera + "_" + df["FECHA"].loc[0].strftime("%Y_%m_%d") + ".zip"
+    frontera_name = "SCCI_" + p_frontera + ".hst"
+
+    if os.path.exists(output_path):
+        try:
+            zip_file = os.path.join(output_path, frontera_file)
+            zipObj = ZipFile(zip_file, 'w')
+            zipObj.writestr('datos/' + frontera_name, str_final)
+            zipObj.close()
+            return True, "{0} ha sido creado".format(frontera_file)
+        except Exception as e:
+            lg.exception(str(e))
