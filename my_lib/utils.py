@@ -1,3 +1,4 @@
+import zipfile
 from datetime import datetime as dt
 from datetime import timedelta
 import logging
@@ -25,14 +26,14 @@ def read_excel_file(file_name:str):
         # check si las columnas del archivo son correctas:
         success, result = valid_columns_names(list(df.columns))
         if not success:
-            return False, None, "Error(Columnas invalidas)"
+            return False, df, "Error(Columnas invalidas)"
         df.columns = result
 
         # check si las fechas son correctas en la columna FECHA
         df.sort_values(by=["FECHA"], inplace=True)
         success, date, timestamp, msg = check_dates_in_a_list(list(df['FECHA']))
         if not success:
-            return False, None, "Error(Formato fecha incorrecto)"
+            return False, df, "Error(Formato fecha incorrecto)"
 
         df["FECHA"] = date
         df["HORA"] = timestamp
@@ -43,7 +44,7 @@ def read_excel_file(file_name:str):
         if len(df.index) != 96:
             msg = "[{0}] El archivo no contiene 96 periodos. \n " \
                   "Número de periodos: [{1}]".format(name, len(df.index))
-            return False, None, "Error(No. periodos {0})".format(len(df.index))
+            return False, df, "Error(No. periodos {0})".format(len(df.index))
 
         # check si el dataframe contiene solo números:
         df.drop(columns=or_columns, inplace=True)
@@ -54,7 +55,7 @@ def read_excel_file(file_name:str):
             cls = [df.columns[ix] for ix in ix_c]
             msg = "[{0}] El archivo contiene valores no reconocidos como números " \
                   "en las columnas [{1}]".format(name, cls)
-            return False, None, "Error(No numéricos)"
+            return False, df, "Error(No numéricos)"
         df_final = pd.concat([df_final, df], axis=1)
         return True, df_final, "Ok ({0})".format(date[0].strftime("%m/%d/%Y"))
 
@@ -131,7 +132,7 @@ def check_dates_in_a_list(str_lst:list):
     # si el formato es único
     if len(fmts) == 1:
         dates = [r[0].date() for r in result]
-        times = [r[0].time().strftime("%H:%H:%S") for r in result]
+        times = [r[0].time().strftime("%H:%M:%S") for r in result]
         try:
 
             fmt_date, fmt_time = fmts[0].split("@")
@@ -201,9 +202,10 @@ def transform_info(df: pd.DataFrame, p_frontera):
     if os.path.exists(output_path):
         try:
             zip_file = os.path.join(output_path, frontera_file)
-            zipObj = ZipFile(zip_file, 'w')
+            zipObj = ZipFile(zip_file, 'w',compression=zipfile.ZIP_DEFLATED)
             zipObj.writestr('datos/' + frontera_name, str_final)
             zipObj.close()
             return True, "{0} ha sido creado".format(frontera_file)
         except Exception as e:
             lg.exception(str(e))
+            return False, str(e)

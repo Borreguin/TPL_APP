@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>662</width>
-    <height>586</height>
+    <width>1385</width>
+    <height>791</height>
    </rect>
   </property>
   <property name="palette">
@@ -263,14 +263,20 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>662</width>
-     <height>21</height>
+     <width>1385</width>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuAbout">
     <property name="title">
      <string>Menú</string>
     </property>
+    <addaction name="actionAbrir_INPUT"/>
+    <addaction name="actionAbrir_OUTPUT"/>
+    <addaction name="separator"/>
+    <addaction name="actionLimpiar_INPUT"/>
+    <addaction name="actionLimpiar_OUTPUT"/>
+    <addaction name="separator"/>
     <addaction name="about_software"/>
    </widget>
    <addaction name="menuAbout"/>
@@ -278,10 +284,60 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="about_software">
    <property name="checkable">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="text">
     <string>Acerca del software</string>
+   </property>
+   <property name="font">
+    <font>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionAbrir_INPUT">
+   <property name="text">
+    <string>Abrir INPUT</string>
+   </property>
+   <property name="font">
+    <font>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionAbrir_OUTPUT">
+   <property name="text">
+    <string>Abrir OUTPUT</string>
+   </property>
+   <property name="font">
+    <font>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionLimpiar_INPUT">
+   <property name="text">
+    <string>Limpiar INPUT</string>
+   </property>
+   <property name="font">
+    <font>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionLimpiar_OUTPUT">
+   <property name="text">
+    <string>Limpiar OUTPUT</string>
+   </property>
+   <property name="font">
+    <font>
+     <family>Tahoma</family>
+     <pointsize>10</pointsize>
+    </font>
    </property>
   </action>
  </widget>

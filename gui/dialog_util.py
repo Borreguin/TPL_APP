@@ -1,4 +1,4 @@
-import logging
+import logging, time
 import sys, os
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtWidgets import QFileDialog, QMessageBox, QTableWidgetItem, QHeaderView, QMainWindow
@@ -42,6 +42,8 @@ c_archive = 1
 c_action = 3
 c_p_frontera = 2
 c_estado = 4
+labels = ('-', 'Archivo', 'P. Frontera', 'Acciones', 'Estado')
+
 class tpl_window(QtWidgets.QMainWindow):
     def __init__(self):
         super(tpl_window, self).__init__()
@@ -50,15 +52,17 @@ class tpl_window(QtWidgets.QMainWindow):
         self.ui.btn_load_files.clicked.connect(self.open_file_names_dialog)
         self.ui.about_software.triggered.connect(self.open_about_window)
         self.ui.dateEdit.setDate(dt.datetime.now().date())
-        labels = ('-', 'Archivo', 'P. Frontera', 'Acciones', 'Estado')
         self.ui.tb_files.setColumnCount(len(labels))
         self.ui.tb_files.setHorizontalHeaderLabels(labels)
         self.ui.tb_files.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
         self.ui.btn_proccess_files.clicked.connect(self.process_all_df)
-
-
+        self.ui.tb_files.resizeColumnsToContents()
 
     def open_file_names_dialog(self):
+        to_process = dict()
+        self.ui.tb_files.clear()
+        self.ui.tb_files.setColumnCount(len(labels))
+        self.ui.tb_files.setHorizontalHeaderLabels(labels)
         self.ui.tb_files.setRowCount(0)
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
@@ -69,10 +73,10 @@ class tpl_window(QtWidgets.QMainWindow):
         self.process_files(files)
         return files
 
-    def process_files(self, files):
-        if len(files) > 0:
-            self.ui.tb_files.setRowCount(len(files))
-            for ix, file in enumerate(files):
+    def process_files(self, files_name):
+        if len(files_name) > 0:
+            self.ui.tb_files.setRowCount(len(files_name))
+            for ix, file in enumerate(files_name):
                 f = str(file).split("/")[-1]
                 self.ui.tb_files.setItem(ix, c_archive, QTableWidgetItem(f))
                 self.ui.tb_files.setItem(ix, c_estado, QTableWidgetItem("Leyendo archivo... "))
@@ -98,16 +102,22 @@ class tpl_window(QtWidgets.QMainWindow):
                 btn.setDisabled(True)
                 self.ui.tb_files.setCellWidget(ix, c_action, btn)
 
-                # Leyendo los archivos de Excel:
-                t = Thread(target=self.populate_row, kwargs=dict(ix=ix, file=file))
-                t.start()
-                lst_th.append(t)
-
                 # Nombres propuestos:
                 proposed_name = u.read_config(f)
                 if proposed_name is not None:
                     self.ui.tb_files.setItem(ix, c_p_frontera, QTableWidgetItem(proposed_name))
+        self.reading_files(files_name)
 
+    def reading_files(self, files):
+        for ix, file in enumerate(files):
+            # Leyendo los archivos de Excel:
+            t = Thread(target=self.populate_row, kwargs=dict(ix=ix, file=file))
+            t.start()
+            lst_th.append(t)
+
+        # for l in lst_th:
+        #    time.sleep(2)
+        #    l.join()
         self.ui.tb_files.resizeColumnsToContents()
 
     def populate_row(self, ix, file):
@@ -116,19 +126,22 @@ class tpl_window(QtWidgets.QMainWindow):
         self.ui.tb_files.setItem(ix, c_estado, QTableWidgetItem(msg))
         f = str(file).split("/")[-1]
         to_process[f] = df
-        if not success:
-            self.ui.tb_files.removeCellWidget(ix, c_action)
-        else:
-            # setting for choosing correct files:
-            # checkbox
-            item = self.ui.tb_files.cellWidget(ix, c_select)
-            item.setDisabled(False)
-            item.setChecked(True)
+        try:
             # button
             item = self.ui.tb_files.cellWidget(ix, c_action)
-            item.setDisabled(False)
-            item.setChecked(True)
-            item.clicked.connect(partial(self.show_file, f))
+            if item is not None:
+                item.setDisabled(False)
+                item.setChecked(True)
+                item.clicked.connect(partial(self.show_file, f))
+
+            if success:
+                # setting for choosing correct files:
+                # checkbox
+                item = self.ui.tb_files.cellWidget(ix, c_select)
+                item.setDisabled(False)
+                item.setChecked(True)
+        except Exception as e:
+            print(str(e))
 
         self.ui.tb_files.resizeColumnsToContents()
 
@@ -155,8 +168,8 @@ class tpl_window(QtWidgets.QMainWindow):
         self.ui2.tb_DF.resizeColumnsToContents()
         self.window.show()
 
-
-    def open_about_window(self):
+    @staticmethod
+    def open_about_window():
         msgBox = QMessageBox()
         msgBox.setIcon(QtWidgets.QMessageBox.Information)
         msgBox.setWindowTitle("Acerca del software")
@@ -171,14 +184,16 @@ class tpl_window(QtWidgets.QMainWindow):
         n = self.ui.tb_files.rowCount()
         for ix in range(n):
             item = self.ui.tb_files.cellWidget(ix, c_select)
-            p_frontera = self.ui.tb_files.item(ix, c_p_frontera).text()
-            if p_frontera is None:
-                p_frontera = "temp_" + str(ix)
+            p_frontera = "temp_" + str(ix)
+            if item is not None:
+                p_frontera = self.ui.tb_files.item(ix, c_p_frontera).text()
+
             if item.isChecked():
                 excel_file = self.ui.tb_files.item(ix, c_archive).text()
-                resp = u.transform_info(to_process[excel_file], p_frontera)
+                success, msg = u.transform_info(to_process[excel_file], p_frontera)
+                self.ui.tb_files.setItem(ix, c_estado, QTableWidgetItem(msg))
                 u.save_config(excel_file, p_frontera)
-
+        self.ui.tb_files.resizeColumnsToContents()
 
 # New window for DF
 

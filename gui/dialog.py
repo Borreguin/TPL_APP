@@ -1,18 +1,20 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\proyectos\TPL_APP\gui\dialog.ui'
+# Form implementation generated from reading ui file 'C:\Users\borre\PycharmProjects\TPL_APP\gui\dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.9.2
+# Created by: PyQt5 UI code generator 5.14.1
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setWindowModality(QtCore.Qt.ApplicationModal)
-        MainWindow.resize(662, 586)
+        MainWindow.resize(1385, 791)
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
         brush.setStyle(QtCore.Qt.SolidPattern)
@@ -129,7 +131,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addLayout(self.gridLayout_2, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 662, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1385, 26))
         self.menubar.setObjectName("menubar")
         self.menuAbout = QtWidgets.QMenu(self.menubar)
         self.menuAbout.setObjectName("menuAbout")
@@ -138,8 +140,42 @@ class Ui_MainWindow(object):
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
         self.about_software = QtWidgets.QAction(MainWindow)
-        self.about_software.setCheckable(True)
+        self.about_software.setCheckable(False)
+        font = QtGui.QFont()
+        font.setFamily("Tahoma")
+        font.setPointSize(10)
+        self.about_software.setFont(font)
         self.about_software.setObjectName("about_software")
+        self.actionAbrir_INPUT = QtWidgets.QAction(MainWindow)
+        font = QtGui.QFont()
+        font.setFamily("Tahoma")
+        font.setPointSize(10)
+        self.actionAbrir_INPUT.setFont(font)
+        self.actionAbrir_INPUT.setObjectName("actionAbrir_INPUT")
+        self.actionAbrir_OUTPUT = QtWidgets.QAction(MainWindow)
+        font = QtGui.QFont()
+        font.setFamily("Tahoma")
+        font.setPointSize(10)
+        self.actionAbrir_OUTPUT.setFont(font)
+        self.actionAbrir_OUTPUT.setObjectName("actionAbrir_OUTPUT")
+        self.actionLimpiar_INPUT = QtWidgets.QAction(MainWindow)
+        font = QtGui.QFont()
+        font.setFamily("Tahoma")
+        font.setPointSize(10)
+        self.actionLimpiar_INPUT.setFont(font)
+        self.actionLimpiar_INPUT.setObjectName("actionLimpiar_INPUT")
+        self.actionLimpiar_OUTPUT = QtWidgets.QAction(MainWindow)
+        font = QtGui.QFont()
+        font.setFamily("Tahoma")
+        font.setPointSize(10)
+        self.actionLimpiar_OUTPUT.setFont(font)
+        self.actionLimpiar_OUTPUT.setObjectName("actionLimpiar_OUTPUT")
+        self.menuAbout.addAction(self.actionAbrir_INPUT)
+        self.menuAbout.addAction(self.actionAbrir_OUTPUT)
+        self.menuAbout.addSeparator()
+        self.menuAbout.addAction(self.actionLimpiar_INPUT)
+        self.menuAbout.addAction(self.actionLimpiar_OUTPUT)
+        self.menuAbout.addSeparator()
         self.menuAbout.addAction(self.about_software)
         self.menubar.addAction(self.menuAbout.menuAction())
 
@@ -158,5 +194,8 @@ class Ui_MainWindow(object):
         self.tb_files.setSortingEnabled(True)
         self.menuAbout.setTitle(_translate("MainWindow", "Menú"))
         self.about_software.setText(_translate("MainWindow", "Acerca del software"))
-
+        self.actionAbrir_INPUT.setText(_translate("MainWindow", "Abrir INPUT"))
+        self.actionAbrir_OUTPUT.setText(_translate("MainWindow", "Abrir OUTPUT"))
+        self.actionLimpiar_INPUT.setText(_translate("MainWindow", "Limpiar INPUT"))
+        self.actionLimpiar_OUTPUT.setText(_translate("MainWindow", "Limpiar OUTPUT"))
 import resources_rc
