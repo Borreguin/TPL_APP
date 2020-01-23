@@ -1,36 +1,42 @@
+import logging
+from numpy import vectorize, issubdtype, number
+import os
 import zipfile
 from datetime import datetime as dt
-from datetime import timedelta
-import logging
-import os, numpy as np
-import pandas as pd
-from my_lib import log_util as lu
 from zipfile import ZipFile
+
+import pandas as pd
+
+from my_lib import log_util as lu
 
 lg = logging.getLogger("utils")
 lg.addHandler(lu.SQLiteHandler())
 
 script_path = os.path.dirname(os.path.abspath(__file__))
 config_file = script_path.replace("my_lib", "config.json")
-output_path = script_path.replace("my_lib", "output")
+output_path = os.path.join("C:\\", "SIMEC", "TPL", "salida")
 name = ""
 
 
 def read_excel_file(file_name:str):
     global name
-    name = file_name.split('\\')[-1]
+    if len(file_name.split('\\')) > 1:
+        name = file_name.split('\\')[-1]
+    else:
+        name = file_name.split('/')[-1]
     print("[{0}] Processing file".format(name))
     try:
-        df = pd.read_excel(file_name)
-        df.dropna(inplace=True)
+        df = pd.read_excel(file_name, sheet_name=name.replace(".xls", ""))
         # check si las columnas del archivo son correctas:
         success, result = valid_columns_names(list(df.columns))
         if not success:
             return False, df, "Error(Columnas invalidas)"
-        df.columns = result
+        df = df[result]
 
         # check si las fechas son correctas en la columna FECHA
         df.sort_values(by=["FECHA"], inplace=True)
+        df = df.head(96)
+        df.dropna(inplace=True)
         success, date, timestamp, msg = check_dates_in_a_list(list(df['FECHA']))
         if not success:
             return False, df, "Error(Formato fecha incorrecto)"
@@ -48,14 +54,17 @@ def read_excel_file(file_name:str):
 
         # check si el dataframe contiene solo números:
         df.drop(columns=or_columns, inplace=True)
-        check_if_is_number = np.vectorize(lambda x: np.issubdtype(x, np.number))
+        for c in df.columns:
+            df[c] = pd.to_numeric(df[c])
+
+        check_if_is_number = vectorize(lambda x: issubdtype(x, number))
         is_number = check_if_is_number(df.dtypes)
         if not all(is_number):
             ix_c = [i for i, x in enumerate(is_number) if not x]
             cls = [df.columns[ix] for ix in ix_c]
             msg = "[{0}] El archivo contiene valores no reconocidos como números " \
                   "en las columnas [{1}]".format(name, cls)
-            return False, df, "Error(No numéricos)"
+            return False, df, "Error(No numéricos) " + msg
         df_final = pd.concat([df_final, df], axis=1)
         return True, df_final, "Ok ({0})".format(date[0].strftime("%m/%d/%Y"))
 
@@ -86,11 +95,12 @@ def valid_columns_names(columns_to_check):
 
     columns_to_check = [c.replace(" ", "") for c in columns_to_check]
     columns_to_check = [c.upper() for c in columns_to_check]
+    columns_to_check = [c for c in columns_to_check if not "UNNAMED" in c]
     if list(columns_to_check) != columns_a:
         msg = "[{0}] Archivo con formato incorrecto en columnas. \n " \
               "Las columnas no coinciden con el formato {1}".format(name, columns)
         print(msg)
-        lg.error(msg)
+        # lg.error(msg)
         return False, msg
     return True, columns
 
@@ -151,7 +161,8 @@ def check_dates_in_a_list(str_lst:list):
                                       "o hay fechas diferentes en el archivo): [{0}]".format(str_lst[-1])
 
         except Exception as e:
-            lg.error(e)
+            print(e)
+            # lg.error(e)
     elif len(fmts) > 1:
         return False, None, None, "Se ha detectado más de un formato de fecha: [{0}]".format(fmts)
 
@@ -178,14 +189,15 @@ def save_config(parameter_name, parameter_value):
         df_config.to_json(config_file)
         return True, "El parámetro {0} fue ingresado".format(parameter_name)
     except Exception as e:
-        lg.error(e)
+        # lg.error(e)
+        print(e)
         return False, "Error: {0}".format(e)
 
 
 def transform_info(df: pd.DataFrame, p_frontera):
     clmn = get_columns_by_default()
 
-    template = "#{fecha} {hora}#0#{periodo}#{AS}#0#{AE}#0#{RS}#0#{RE}#0#########\n"
+    template = "#{fecha} {hora}#0#{periodo}#{AE}#0#{AS}#0#{RE}#0#{RS}#0#########\n"
     str_final = str()
     for ix in df.index:
         str_final += template.format(fecha=df["FECHA"].loc[ix].strftime("%d/%m/%Y"),
@@ -203,9 +215,10 @@ def transform_info(df: pd.DataFrame, p_frontera):
         try:
             zip_file = os.path.join(output_path, frontera_file)
             zipObj = ZipFile(zip_file, 'w',compression=zipfile.ZIP_DEFLATED)
-            zipObj.writestr('datos/' + frontera_name, str_final)
+            zipObj.writestr(frontera_name, str_final)
             zipObj.close()
             return True, "{0} ha sido creado".format(frontera_file)
         except Exception as e:
-            lg.exception(str(e))
+            print(e)
+            # lg.exception(str(e))
             return False, str(e)

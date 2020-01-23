@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1385</width>
-    <height>791</height>
+    <width>1033</width>
+    <height>534</height>
    </rect>
   </property>
   <property name="palette">
@@ -141,6 +141,10 @@
                 </property>
                </widget>
               </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_5">
               <item>
                <widget class="QPushButton" name="btn_proccess_files">
                 <property name="font">
@@ -151,51 +155,6 @@
                 </property>
                 <property name="text">
                  <string>Procesar archivos</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_5">
-              <item>
-               <widget class="QLabel" name="label">
-                <property name="font">
-                 <font>
-                  <family>Tahoma</family>
-                  <pointsize>9</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>(mm/dd/yyyy):</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QDateEdit" name="dateEdit">
-                <property name="font">
-                 <font>
-                  <family>Tahoma</family>
-                  <pointsize>12</pointsize>
-                 </font>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-                <property name="readOnly">
-                 <bool>false</bool>
-                </property>
-                <property name="showGroupSeparator" stdset="0">
-                 <bool>false</bool>
-                </property>
-                <property name="displayFormat">
-                 <string>M/d/yyyy</string>
-                </property>
-                <property name="calendarPopup">
-                 <bool>true</bool>
                 </property>
                </widget>
               </item>
@@ -263,8 +222,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1385</width>
-     <height>26</height>
+     <width>1033</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuAbout">
@@ -274,8 +233,7 @@
     <addaction name="actionAbrir_INPUT"/>
     <addaction name="actionAbrir_OUTPUT"/>
     <addaction name="separator"/>
-    <addaction name="actionLimpiar_INPUT"/>
-    <addaction name="actionLimpiar_OUTPUT"/>
+    <addaction name="actionAbrir_Servidor_Web"/>
     <addaction name="separator"/>
     <addaction name="about_software"/>
    </widget>
@@ -338,6 +296,11 @@
      <family>Tahoma</family>
      <pointsize>10</pointsize>
     </font>
+   </property>
+  </action>
+  <action name="actionAbrir_Servidor_Web">
+   <property name="text">
+    <string>Abrir Servidor Web</string>
    </property>
   </action>
  </widget>

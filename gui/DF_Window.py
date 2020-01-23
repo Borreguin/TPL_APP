@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\borre\PycharmProjects\TPL_APP\gui\DF_Window.ui'
+# Form implementation generated from reading ui file 'E:\proyectos\TPL_APP\gui\DF_Window.ui'
 #
 # Created by: PyQt5 UI code generator 5.14.1
 #

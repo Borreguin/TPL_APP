@@ -1,13 +1,17 @@
-import logging, time
-import sys, os
-from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtWidgets import QFileDialog, QMessageBox, QTableWidgetItem, QHeaderView, QMainWindow
-import pyqt5ac
 import datetime as dt
-from my_lib import utils as u
-from threading import Thread
-from my_lib import log_util as lu
+import logging
+import os
+import sys
 from functools import partial
+from threading import Thread
+import subprocess as sb
+import pyqt5ac
+from PyQt5 import QtWidgets, QtGui, QtCore
+from PyQt5.QtWidgets import QFileDialog, QMessageBox, QTableWidgetItem
+
+from my_lib import log_util as lu
+from my_lib import utils as u
+
 # https://likegeeks.com/pyqt5-tutorial/
 """ Variables globales"""
 script_path = os.path.dirname(os.path.abspath(__file__))
@@ -17,7 +21,8 @@ lg.addHandler(lu.SQLiteHandler())
 """ Generando GUI desde archivo dialog.ui"""
 gui_file = os.path.join(script_path, "dialog.ui")
 gui_py_path = os.path.join(script_path, "dialog.py")
-input_path = script_path.replace("gui", "input")
+input_path = os.path.join("C:\\", "SIMEC")
+output_path = os.path.join("C:\\", "SIMEC", "TPL", "salida")
 resource_path = os.path.join(script_path, "resources")
 resource_py_path = os.path.join(script_path, "resource_rc.py")
 
@@ -49,14 +54,25 @@ class tpl_window(QtWidgets.QMainWindow):
         super(tpl_window, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        # asociando la GUI con las funciones
+        # abrir explorador de archivos
         self.ui.btn_load_files.clicked.connect(self.open_file_names_dialog)
+        # ventana acerca del software
         self.ui.about_software.triggered.connect(self.open_about_window)
-        self.ui.dateEdit.setDate(dt.datetime.now().date())
+        # Configurando la tabla
         self.ui.tb_files.setColumnCount(len(labels))
         self.ui.tb_files.setHorizontalHeaderLabels(labels)
         self.ui.tb_files.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
-        self.ui.btn_proccess_files.clicked.connect(self.process_all_df)
         self.ui.tb_files.resizeColumnsToContents()
+        # Boton de procesamiento de archivos
+        self.ui.btn_proccess_files.clicked.connect(self.process_all_df)
+        # abrir_input
+        self.ui.actionAbrir_INPUT.triggered.connect(self.open_input)
+        # abrir_output
+        self.ui.actionAbrir_OUTPUT.triggered.connect(self.open_output)
+        # abrir WebServer
+        self.ui.actionAbrir_Servidor_Web.triggered.connect(self.open_server_web)
+
 
     def open_file_names_dialog(self):
         to_process = dict()
@@ -194,6 +210,20 @@ class tpl_window(QtWidgets.QMainWindow):
                 self.ui.tb_files.setItem(ix, c_estado, QTableWidgetItem(msg))
                 u.save_config(excel_file, p_frontera)
         self.ui.tb_files.resizeColumnsToContents()
+
+    def open_input(self):
+        sb.Popen('explorer "{0}"'.format(input_path))
+
+    def open_output(self):
+        sb.Popen('explorer "{0}"'.format(output_path + '\\'))
+
+    def open_server_web(self):
+        try:
+            path_server = "\\\\10.2.3.5\\c$\\Centax\\DatosWeb"
+            print(path_server)
+            sb.Popen('explorer "{0}"'.format(path_server))
+        except Exception as e:
+            print(e)
 
 # New window for DF
 

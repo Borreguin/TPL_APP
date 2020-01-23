@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\borre\PycharmProjects\TPL_APP\gui\dialog.ui'
+# Form implementation generated from reading ui file 'E:\proyectos\TPL_APP\gui\dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.14.1
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
-
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setWindowModality(QtCore.Qt.ApplicationModal)
-        MainWindow.resize(1385, 791)
+        MainWindow.resize(1033, 534)
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
         brush.setStyle(QtCore.Qt.SolidPattern)
@@ -72,35 +70,16 @@ class Ui_MainWindow(object):
         self.btn_load_files.setFont(font)
         self.btn_load_files.setObjectName("btn_load_files")
         self.verticalLayout_6.addWidget(self.btn_load_files)
+        self.horizontalLayout_3.addLayout(self.verticalLayout_6)
+        self.verticalLayout_5 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.btn_proccess_files = QtWidgets.QPushButton(self.centralwidget)
         font = QtGui.QFont()
         font.setFamily("Tahoma")
         font.setPointSize(11)
         self.btn_proccess_files.setFont(font)
         self.btn_proccess_files.setObjectName("btn_proccess_files")
-        self.verticalLayout_6.addWidget(self.btn_proccess_files)
-        self.horizontalLayout_3.addLayout(self.verticalLayout_6)
-        self.verticalLayout_5 = QtWidgets.QVBoxLayout()
-        self.verticalLayout_5.setObjectName("verticalLayout_5")
-        self.label = QtWidgets.QLabel(self.centralwidget)
-        font = QtGui.QFont()
-        font.setFamily("Tahoma")
-        font.setPointSize(9)
-        self.label.setFont(font)
-        self.label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.label.setObjectName("label")
-        self.verticalLayout_5.addWidget(self.label)
-        self.dateEdit = QtWidgets.QDateEdit(self.centralwidget)
-        font = QtGui.QFont()
-        font.setFamily("Tahoma")
-        font.setPointSize(12)
-        self.dateEdit.setFont(font)
-        self.dateEdit.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.dateEdit.setReadOnly(False)
-        self.dateEdit.setProperty("showGroupSeparator", False)
-        self.dateEdit.setCalendarPopup(True)
-        self.dateEdit.setObjectName("dateEdit")
-        self.verticalLayout_5.addWidget(self.dateEdit)
+        self.verticalLayout_5.addWidget(self.btn_proccess_files)
         self.horizontalLayout_3.addLayout(self.verticalLayout_5)
         self.verticalLayout_4.addLayout(self.horizontalLayout_3)
         self.sup_container.addLayout(self.verticalLayout_4)
@@ -131,7 +110,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addLayout(self.gridLayout_2, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1385, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1033, 21))
         self.menubar.setObjectName("menubar")
         self.menuAbout = QtWidgets.QMenu(self.menubar)
         self.menuAbout.setObjectName("menuAbout")
@@ -170,11 +149,12 @@ class Ui_MainWindow(object):
         font.setPointSize(10)
         self.actionLimpiar_OUTPUT.setFont(font)
         self.actionLimpiar_OUTPUT.setObjectName("actionLimpiar_OUTPUT")
+        self.actionAbrir_Servidor_Web = QtWidgets.QAction(MainWindow)
+        self.actionAbrir_Servidor_Web.setObjectName("actionAbrir_Servidor_Web")
         self.menuAbout.addAction(self.actionAbrir_INPUT)
         self.menuAbout.addAction(self.actionAbrir_OUTPUT)
         self.menuAbout.addSeparator()
-        self.menuAbout.addAction(self.actionLimpiar_INPUT)
-        self.menuAbout.addAction(self.actionLimpiar_OUTPUT)
+        self.menuAbout.addAction(self.actionAbrir_Servidor_Web)
         self.menuAbout.addSeparator()
         self.menuAbout.addAction(self.about_software)
         self.menubar.addAction(self.menuAbout.menuAction())
@@ -188,8 +168,6 @@ class Ui_MainWindow(object):
         self.lb_title.setText(_translate("MainWindow", "GENERADOR ARCHIVOS TPL"))
         self.btn_load_files.setText(_translate("MainWindow", "Cargar archivos"))
         self.btn_proccess_files.setText(_translate("MainWindow", "Procesar archivos"))
-        self.label.setText(_translate("MainWindow", "(mm/dd/yyyy):"))
-        self.dateEdit.setDisplayFormat(_translate("MainWindow", "M/d/yyyy"))
         self.logo.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><img src=\":/logo/logo.jpg\"/></p></body></html>"))
         self.tb_files.setSortingEnabled(True)
         self.menuAbout.setTitle(_translate("MainWindow", "Menú"))
@@ -198,4 +176,6 @@ class Ui_MainWindow(object):
         self.actionAbrir_OUTPUT.setText(_translate("MainWindow", "Abrir OUTPUT"))
         self.actionLimpiar_INPUT.setText(_translate("MainWindow", "Limpiar INPUT"))
         self.actionLimpiar_OUTPUT.setText(_translate("MainWindow", "Limpiar OUTPUT"))
+        self.actionAbrir_Servidor_Web.setText(_translate("MainWindow", "Abrir Servidor Web"))
+
 import resources_rc
